@@ -6,9 +6,29 @@
 ## 渠道（按可靠度）
 
 1. **官方 API 文档 news 页** — `https://api-docs.deepseek.com/zh-cn/news/newsYYMMDD`（**两位年份 + 月日**，如 news260813 = 2026-08-13、news260910 = 2026-09-10）。⚠️ 2026-09-10 实测：省略年份的 `news0813` 是**无效页**（回落到「Your First API Call」导航），必须带年份。Docusaurus 站点，curl 直接可抓。想看某天发布→按此格式拼 URL
+1b. **官方更新日志页（查「有没有新发布」最快的入口）** — `https://api-docs.deepseek.com/zh-cn/updates`，全部发布按时间倒序排（最新在前：日期 + 标题 + 基准分 + 要点），一次抓完就知有没有新东西，不用按日期拼 news URL。2026-10-05 实测仍是 09-10 V4.1-Flash 为最新条目；页面很长，脚本抓取建议只留最新一条（`awk '/^时间: /{n++} n>=2{exit} {print}'`），`bin/read-url` 默认 6000 字符会截断
+
+1c. **穷举入口：`sitemap.xml`** — `curl -s https://api-docs.deepseek.com/sitemap.xml` 一次列全文档站页面（guides / api / quick_start / 全部 `newsYYMMDD`），判「有没有新发布、有没有新文档页」最快的清单：取 news 页 URL 里日期最大的一条即最新发布，再扫一遍 guides 有没有没见过的页——比逐个拼 news URL 试快得多（Docusaurus 站可照搬到其他同类站点）
+
 2. **官方定价页** — `https://api-docs.deepseek.com/zh-cn/quick_start/pricing`。含「模型版本」字段（如 `DeepSeek-V4-Pro-0813`）+ 价格表 + 上下文/输出长度 + 并发限制 + 公告（如「计划近期整体上调 API 定价」）。⚠️ 必须 `curl -sL` + `User-Agent: Mozilla/5.0`，纯 grep 抓价格页会空手而归（标签/脚本干扰）
 3. **/models 实测** — 有 API key 时 `GET /models` 看实际模型 ID（0731 实战用过）
 4. **第三方报道交叉** — IT之家（首页标题可 grep 出文章链接，`<a href="...">标题</a>` 正则），腾讯新闻 new.qq.com/rain/a/...
+
+## 查「官网有没有更新」：内容面 + 结构面都要扫
+
+**「官网更新」不等于「发布了新东西」**——菜单栏、入口、下载页的变动同样是更新，只看正文会漏（实测：扫完更新日志/news/定价页/主站正文后报「没有更新」，被指出漏了文档站菜单栏扩充与官网新增的 Harness 桌面端入口）。
+
+| 面 | 扫什么 | 入口 |
+|---|---|---|
+| 内容 | 新发布／新公告 | 更新日志页 / `newsYYMMDD` / 主站横幅与 news 列表 |
+| 内容 | 价格与模型口径 | 定价页（表 + 脚注） |
+| 结构 | 首页导航与页脚入口 | `https://www.deepseek.com/`（如「Harness 桌面端」「下载」） |
+| 结构 | 客户端／桌面端上架 | `https://www.deepseek.com/download/` |
+| 结构 | 文档站菜单栏（新分类、新页面、新外链） | `/zh-cn/` 侧边栏；每个分类各取一页提 `<a class="menu__link">` 文字（一页只渲染当前分类，`sitemap.xml` 会漏菜单里的**外链**条目） |
+| 结构 | 产品线动作 | `https://www.deepseek.com/harness/`（DSH 产品页）、`/download/` 上的新客户端 |
+
+- **主站页面别只信 `bin/read-url`**：它在这类营销页会**整段丢**（实测 `/download/` 的「Harness 桌面端」区块提不出来）——结构核对走 `curl -sL` + 去 script/style/标签提文本（配方见 `read-url/references/field-notes.md`「主站营销页会丢段」）
+- **官方文档自己会滞后**：Agent 接入页曾长期写着「选 deepseek-v4-pro」，与定价页现行 `deepseek-flash` 口径不符——引用官方接入文档里的模型名/参数前，先跟定价页对一遍（接入矩阵与 DSH 相关档案见 `dsh-plugin-dev/references/material-map.md`）
 
 ## 解析配方（Docusaurus HTML）
 
