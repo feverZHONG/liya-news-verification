@@ -72,6 +72,7 @@ python3 scripts/h5_functional_probe.py <url> --click '#btn'   # 交互页/按钮
 - [liya-document-translation](https://github.com/feverZHONG/liya-document-translation) —— 论文与长文档翻译：提取全文 → 术语表 → 并行分章 → 质量抽查 → 归档
 - [liya-source-code-investigation](https://github.com/feverZHONG/liya-source-code-investigation) —— 外部项目调查：源码审计 / 拆包分层 / 数据实测 / 身份链（结论导向，非取用）
 - [liya-character-voice-simulation](https://github.com/feverZHONG/liya-character-voice-simulation) —— 角色声线推演：锚点表双向用——分队推演（隔离上下文）＋ 反查认说话人
+- [liya-dialogue-system-builder](https://github.com/feverZHONG/liya-dialogue-system-builder)
 
 ## 提思路 / 提修正
 
