@@ -36,7 +36,7 @@ tier: T2  # T分级: T2=直接做 / T1=先请示 / T0=一律拒
 3. **图片附件下载** — URL 是 `multimedia.nt.qq.com.cn/download?appid&fileid&rkey&spec=0`，用 python urllib 批量下（带 UA）；**bash 脚本里裸 `&` 会触发 Hermes 前台拦截**；下载完用 PIL 验格式，产物仅64字节=JSON错误页
 4. **图片识别+核心提炼** — 视觉入口（作者环境是 `mmx vision describe`） 逐张看（提示词要问「表情包/截图/照片」定性+转录文字），重复 fileid 只识别一次，最后用一两句话概括整个合集要讲的事
 
-**坑：** `appid is not match` = fileid 失效，换 UA/Referer 都没救；环境无 `file` 命令用 PIL 查格式；mmx 绝对路径 `<数据根>/.npm-global/bin/mmx`（后台 PATH 不含）。
+**坑：** `appid is not match` = fileid 失效，换 UA/Referer 都没救；环境无 `file` 命令用 PIL 查格式；mmx 绝对路径 `<cli-dir>/mmx`（后台 PATH 不含）。
 
 ### 群消息接收链路（2026-08-03 验证）——哪里会断信息
 
